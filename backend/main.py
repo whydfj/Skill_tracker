@@ -52,7 +52,6 @@ from fastapi.staticfiles import StaticFiles
 from starlette.responses import RedirectResponse
 
 from backend.api import manager, user, admin
-from backend.api.ai_assistant import ai_chat
 from authx.exceptions import MissingTokenError
 
 app = FastAPI()
@@ -90,7 +89,6 @@ async def missing_token_handler(request, exc: MissingTokenError):
 app.include_router(admin.router, prefix="/api")
 app.include_router(manager.router, prefix="/api")
 app.include_router(user.router, prefix="/api")
-app.include_router(ai_chat.router, prefix="/api")
 
 
 # Вспомогательные эндпоинты (если нужны)

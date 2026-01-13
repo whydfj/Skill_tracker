@@ -73,6 +73,8 @@ class DatabaseManager:
     @staticmethod
     async def create_user(username, password_hash, role, name, surname, email_user):
         async with new_session() as s:
+            if role == "user":
+                role = "employee"
             # Создаем пользователя
             new_user = Users(
                 username=username,
