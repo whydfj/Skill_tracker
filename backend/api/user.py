@@ -18,8 +18,29 @@ async def login(user: User_Login_Schema, response: Response):
         raise HTTPException(status_code=409, detail="User is not found")
 
     token = security.create_access_token(uid=str(t_user.id))
-    response.set_cookie(config.JWT_ACCESS_COOKIE_NAME, token)
-    return {"message": "Пользователь найден", "sss": t_user, "token": token}
+
+    # Критически важно: установите cookie с правильными параметрами
+    response.set_cookie(
+        key="aboba",  # должно совпадать с JWT_ACCESS_COOKIE_NAME в security.py
+        value=token,
+        httponly=True,
+        secure=False,  # установите True в production с HTTPS
+        samesite="lax",
+        max_age=3600  # 1 час
+    )
+
+    return {
+        "message": "Пользователь найден",
+        "user": {
+            "id": t_user.id,
+            "username": t_user.username,
+            "role": t_user.role,
+            "name": t_user.name,
+            "surname": t_user.surname,
+            "email_user": t_user.email_user,
+            "created_at": t_user.created_at
+        }
+    }
 
 
 @router.post("/logout", tags=["Authentication"])

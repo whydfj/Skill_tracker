@@ -58,12 +58,11 @@ from authx.exceptions import MissingTokenError
 app = FastAPI()
 
 # CORS — правильно
+from fastapi.middleware.cors import CORSMiddleware
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:8000",
-        "http://127.0.0.1:8000"
-    ],
+    allow_origins=["http://localhost:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -78,7 +77,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 def main_page():
     return RedirectResponse(url="/static/index.html")
 
-# Обработка ошибки токена
+
 
 @app.exception_handler(MissingTokenError)
 async def missing_token_handler(request, exc: MissingTokenError):

@@ -5,6 +5,7 @@ Curse_work/
 │   ├── api/
 │   │   ├── manager.py
 │   │   ├── admin.py
+        ├── api/
 │   │   └── user.py
 │   │
 │   ├── core/
