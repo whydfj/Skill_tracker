@@ -3,6 +3,7 @@ import { useAuth } from "../context/AuthContext";
 import Layout from "../components/Layout";
 import { tasksAPI } from "../api/tasks";
 import { usersAPI } from "../api/users";
+import { aiAPI } from "../api/ai";
 import Modal from "../components/Modal";
 
 export default function TaskManagement() {
@@ -38,6 +39,7 @@ export default function TaskManagement() {
     taskId: null,
     newDeadline: "",
   });
+  const [aiLoading, setAiLoading] = useState(false);
 
   useEffect(() => {
     if (isManager()) {
@@ -80,6 +82,41 @@ export default function TaskManagement() {
       alert("Задача успешно создана!");
     } catch (error) {
       alert("Ошибка создания задачи: " + (error.response?.data?.detail || error.message));
+    }
+  };
+
+  const handleSuggestDescription = async () => {
+    if (!newTask.username || !newTask.title) {
+      alert("Сначала выберите пользователя и введите название задачи");
+      return;
+    }
+
+    try {
+      setAiLoading(true);
+      const data = await aiAPI.suggestTaskDescription({
+        username: newTask.username,
+        title: newTask.title,
+        draft_description: newTask.description || "",
+      });
+      const suggested = data?.suggested_description || "";
+      if (!suggested) {
+        alert("AI не смог сгенерировать описание. Попробуйте позже.");
+        return;
+      }
+
+      setNewTask((prev) => ({
+        ...prev,
+        description: prev.description
+          ? `${prev.description}\n\n${suggested}`
+          : suggested,
+      }));
+    } catch (error) {
+      alert(
+        "Ошибка работы AI-помощника: " +
+          (error.response?.data?.detail || error.message)
+      );
+    } finally {
+      setAiLoading(false);
     }
   };
 
@@ -389,6 +426,19 @@ export default function TaskManagement() {
               className="input-field"
               placeholder="Введите описание задачи"
             />
+          </div>
+          <div className="flex justify-between items-center gap-3">
+            <span className="text-xs text-gray-500">
+              AI-помощник может помочь детализировать описание задачи.
+            </span>
+            <button
+              type="button"
+              onClick={handleSuggestDescription}
+              disabled={aiLoading || !newTask.username || !newTask.title}
+              className="px-4 py-2 rounded-lg border border-blue-300 text-blue-700 text-sm font-medium hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {aiLoading ? "AI дописывает..." : "Дополнить описание с помощью AI"}
+            </button>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">

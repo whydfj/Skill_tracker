@@ -8,4 +8,9 @@ export const settingsAPI = {
     });
     return response.data;
   },
+
+  getSettings: async () => {
+    const response = await api.get("/get_settings");
+    return response.data;
+  },
 };

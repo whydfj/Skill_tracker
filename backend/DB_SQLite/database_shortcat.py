@@ -183,7 +183,9 @@ class DatabaseManager:
             user_id = await DatabaseManager().get_user_id_by_username(username)
 
             users_tasks = await t_session.execute(
-                select(Tasks).where(Tasks.employee_id == user_id)  # type: ignore
+                select(Tasks)
+                .options(selectinload(Tasks.comments).selectinload(Comment.user))
+                .where(Tasks.employee_id == user_id)  # type: ignore
             )
 
             return users_tasks.scalars().all()

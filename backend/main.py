@@ -52,6 +52,7 @@ from fastapi.staticfiles import StaticFiles
 from starlette.responses import RedirectResponse
 
 from backend.api import manager, user, admin
+from backend.api.ai_assistant import ai_chat
 from authx.exceptions import MissingTokenError
 
 app = FastAPI()
@@ -61,7 +62,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=["http://localhost:5174", "http://localhost:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -89,6 +90,7 @@ async def missing_token_handler(request, exc: MissingTokenError):
 app.include_router(admin.router, prefix="/api")
 app.include_router(manager.router, prefix="/api")
 app.include_router(user.router, prefix="/api")
+app.include_router(ai_chat.router, prefix="/api")
 
 
 # Вспомогательные эндпоинты (если нужны)

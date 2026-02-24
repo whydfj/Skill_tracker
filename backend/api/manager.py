@@ -1,7 +1,8 @@
 from fastapi import Depends, HTTPException, APIRouter, BackgroundTasks
 from sqlalchemy import select, update, delete
+from sqlalchemy.orm import selectinload
 
-from backend.DB_SQLite.data_base_work import new_session, Users, Tasks
+from backend.DB_SQLite.data_base_work import new_session, Users, Tasks, Comment
 from backend.core.security import security
 from backend.schemas.tasks import Task_Schema, Task_Set_Schema, Task_Delete_Schema, Deadline_Set_Schema
 from backend.schemas.users import User_Create_Schema
@@ -111,6 +112,7 @@ async def get_all_tasks(current_user: dict = Depends(security.access_token_requi
     async with new_session() as session:
         all_tasks = await session.execute(
             select(Tasks)
+            .options(selectinload(Tasks.comments).selectinload(Comment.user))
         )
         return all_tasks.scalars().all()
 

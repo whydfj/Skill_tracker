@@ -30,3 +30,9 @@ class Deadline_Set_Schema(BaseModel):
 class Progress_Update_Schema(BaseModel):
     task_title: str
     progress: int = Field(ge=0, le=100)
+
+
+class Task_AI_Request_Schema(BaseModel):
+    username: str
+    title: str
+    draft_description: str

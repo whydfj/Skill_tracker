@@ -1,7 +1,8 @@
 from fastapi import HTTPException, Response, APIRouter, Depends
 from sqlalchemy import select, update
+from sqlalchemy.orm import selectinload
 
-from backend.DB_SQLite.data_base_work import new_session, Tasks, UserSettings
+from backend.DB_SQLite.data_base_work import new_session, Tasks, UserSettings, Comment, Users
 from backend.core.security import security, config
 from backend.schemas.tasks import Progress_Update_Schema
 from backend.schemas.users import (User_Login_Schema, User_Found_and_Delete_Schema, Comment_Schema, DeleteCommentSchema,
@@ -75,6 +76,7 @@ async def get_my_tasks(current_user: dict = Depends(security.access_token_requir
         user_id = int(dict(current_user)["sub"])
         user_tasks = await session.execute(
             select(Tasks)
+            .options(selectinload(Tasks.comments).selectinload(Comment.user))
             .where(Tasks.employee_id == user_id)
         )
         return user_tasks.scalars().all()
