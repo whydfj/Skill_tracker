@@ -10,8 +10,8 @@ from backend.main import app
 from backend.core.security import security
 
 
-# Секретный ключ должен соответствовать тому, что в вашем приложении
-SECRET_KEY = "test-secret-key"  # замените на ваш реальный ключ из config.py
+
+SECRET_KEY = "test-secret-key"
 ALGORITHM = "HS256"
 
 
@@ -89,7 +89,7 @@ def client_without_auth(client):
     return client
 
 
-# Для обратной совместимости с тестами, которые используют старые имена
+
 @pytest.fixture
 def client_manager(client_with_manager_auth):
     """Alias for client_with_manager_auth."""

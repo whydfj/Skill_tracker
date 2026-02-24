@@ -25,7 +25,7 @@ async def test_login_success(client):
 
     with patch.object(DatabaseManager, 'get_login', new_callable=AsyncMock) as mock_get_login:
         mock_get_login.return_value = mock_user
-        # Добавляем префикс /api
+
         response = client.post("/api/login", json=login_data)
 
     assert response.status_code == 200
@@ -44,7 +44,7 @@ async def test_login_failure(client):
 
     with patch.object(DatabaseManager, 'get_login', new_callable=AsyncMock) as mock_get_login:
         mock_get_login.return_value = None
-        # Добавляем префикс /api
+
         response = client.post("/api/login", json=login_data)
 
     assert response.status_code == 409
@@ -53,7 +53,7 @@ async def test_login_failure(client):
 @pytest.mark.asyncio
 async def test_logout(client):
     """Test logout."""
-    # Добавляем префикс /api
+
     response = client.post("/api/logout")
     assert response.status_code == 200
     assert response.json()["status"] is True
@@ -72,7 +72,7 @@ async def test_found_user_success(client_with_user_auth):
 
     with patch.object(DatabaseManager, 'get_user_by_username', new_callable=AsyncMock) as mock_get:
         mock_get.return_value = mock_user
-        # Добавляем префикс /api
+
         response = client_with_user_auth.post("/api/found", json=found_data)
 
     assert response.status_code == 200
@@ -87,7 +87,7 @@ async def test_found_user_not_found(client_with_user_auth):
 
     with patch.object(DatabaseManager, 'get_user_by_username', new_callable=AsyncMock) as mock_get:
         mock_get.return_value = None
-        # Добавляем префикс /api
+
         response = client_with_user_auth.post("/api/found", json=found_data)
 
     assert response.status_code == 404
@@ -99,7 +99,7 @@ async def test_get_current_user_success(client_with_user_auth):
     with patch.object(DatabaseManager, 'get_user_by_id', new_callable=AsyncMock) as mock_get:
         mock_user = MagicMock()
         mock_get.return_value = mock_user
-        # Добавляем префикс /api
+
         response = client_with_user_auth.get("/api/get_current_user")
 
     assert response.status_code == 200
@@ -115,7 +115,7 @@ async def test_get_my_tasks_success(client_with_user_auth):
         mock_session = AsyncMock()
         mock_session_ctx.return_value.__aenter__.return_value = mock_session
         mock_session.execute.return_value.scalars.return_value.all = AsyncMock(return_value=tasks)
-        # Добавляем префикс /api
+
         response = client_with_user_auth.get("/api/get_my_tasks")
 
     assert response.status_code == 200
@@ -134,7 +134,7 @@ async def test_update_progress_success(client_with_user_auth):
         mock_session = AsyncMock()
         mock_session_ctx.return_value.__aenter__.return_value = mock_session
         mock_session.execute.return_value.scalar_one_or_none = AsyncMock(return_value=MagicMock())
-        # Добавляем префикс /api
+
         response = client_with_user_auth.patch("/api/tasks/My Task/progress", json=progress_data)
 
     assert response.status_code == 200
@@ -153,7 +153,7 @@ async def test_update_progress_task_not_found(client_with_user_auth):
         mock_session = AsyncMock()
         mock_session_ctx.return_value.__aenter__.return_value = mock_session
         mock_session.execute.return_value.scalar_one_or_none = AsyncMock(return_value=None)
-        # Добавляем префикс /api
+
         response = client_with_user_auth.patch("/api/tasks/Nonexistent Task/progress", json=progress_data)
 
     assert response.status_code == 404
@@ -170,7 +170,7 @@ async def test_add_comment_success(client_with_user_auth):
 
     with patch.object(DatabaseManager, 'add_comment', new_callable=AsyncMock) as mock_add:
         mock_add.return_value = MagicMock()
-        # Добавляем префикс /api
+
         response = client_with_user_auth.post("/api/add_new_comment", json=comment_data)
 
     assert response.status_code == 200
@@ -188,7 +188,7 @@ async def test_add_comment_forbidden(client_with_user_auth):
 
     with patch.object(DatabaseManager, 'add_comment', new_callable=AsyncMock) as mock_add:
         mock_add.return_value = None
-        # Добавляем префикс /api
+
         response = client_with_user_auth.post("/api/add_new_comment", json=comment_data)
 
     assert response.status_code == 403
@@ -202,7 +202,7 @@ async def test_delete_comment_success(client_with_user_auth):
     with patch.object(DatabaseManager, 'delete_comment_with_comment_id_and_user_id',
                       new_callable=AsyncMock) as mock_del:
         mock_del.return_value = True
-        # Для DELETE с телом используем request
+
         response = client_with_user_auth.request(
             method="DELETE",
             url="/api/delete_comment",
@@ -221,7 +221,7 @@ async def test_delete_comment_forbidden(client_with_user_auth):
     with patch.object(DatabaseManager, 'delete_comment_with_comment_id_and_user_id',
                       new_callable=AsyncMock) as mock_del:
         mock_del.return_value = None
-        # Для DELETE с телом используем request
+
         response = client_with_user_auth.request(
             method="DELETE",
             url="/api/delete_comment",
@@ -242,7 +242,7 @@ async def test_update_settings_success(client_with_user_auth):
     with patch('backend.api.user.new_session') as mock_session_ctx:
         mock_session = AsyncMock()
         mock_session_ctx.return_value.__aenter__.return_value = mock_session
-        # Добавляем префикс /api
+
         response = client_with_user_auth.patch("/api/reset_settings", json=settings_data)
 
     assert response.status_code == 200
@@ -260,7 +260,7 @@ async def test_update_settings_partial(client_with_user_auth):
     with patch('backend.api.user.new_session') as mock_session_ctx:
         mock_session = AsyncMock()
         mock_session_ctx.return_value.__aenter__.return_value = mock_session
-        # Добавляем префикс /api
+
         response = client_with_user_auth.patch("/api/reset_settings", json=settings_data)
 
     assert response.status_code == 200

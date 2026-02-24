@@ -32,7 +32,7 @@ async def test_create_user_success(client_with_admin_auth):
 
     assert response.status_code == 200
     assert response.json()["status"] is True
-    # Русское сообщение из вашего кода
+
     assert "Пользователь создан успешно" in response.json()["message"]
     mock_get_user.assert_awaited_once_with("newuser", "john@example.com")
     mock_create.assert_awaited_once()
@@ -59,7 +59,7 @@ async def test_create_user_already_exists(client_with_admin_auth):
             response = client_with_admin_auth.post("/api/create_user", json=user_data)
 
     assert response.status_code == 405
-    # Русское сообщение из вашего кода
+
     assert "Пользователь с таким именем или email уже существует" in response.json()["detail"]
 
 
@@ -83,7 +83,7 @@ async def test_create_user_short_password(client_with_admin_auth):
             response = client_with_admin_auth.post("/api/create_user", json=user_data)
 
     assert response.status_code == 400
-    # Русское сообщение из вашего кода
+
     assert "Длина пароля должна быть хотя бы 4" in response.json()["detail"]
 
 
@@ -105,7 +105,7 @@ async def test_create_user_not_admin(client_with_user_auth):
         response = client_with_user_auth.post("/api/create_user", json=user_data)
 
     assert response.status_code == 401
-    # Русское сообщение из вашего кода
+
     assert "только администратор" in response.json()["detail"]
 
 
@@ -130,7 +130,7 @@ async def test_delete_user_success(client_with_admin_auth):
 
     assert response.status_code == 200
     assert response.json()["status"] is True
-    # Русское сообщение из вашего кода
+
     assert "Пользователь удален" in response.json()["message"]
 
 
@@ -151,7 +151,7 @@ async def test_delete_user_not_found(client_with_admin_auth):
             )
 
     assert response.status_code == 404
-    # Русское сообщение из вашего кода
+
     assert "Пользователь не найден" in response.json()["detail"]
 
 
@@ -170,5 +170,5 @@ async def test_delete_user_not_admin(client_with_user_auth):
         )
 
     assert response.status_code == 401
-    # Русское сообщение из вашего кода
+
     assert "только администратор" in response.json()["detail"]
